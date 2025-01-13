@@ -3685,11 +3685,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/izabellamaria/ToDoAPI/ToDoAPI.csproj",
+      "projectUniqueName": "/Users/izabellamaria/ToDo/Backend/ToDoAPI.csproj",
       "projectName": "ToDoAPI",
-      "projectPath": "/Users/izabellamaria/ToDoAPI/ToDoAPI.csproj",
+      "projectPath": "/Users/izabellamaria/ToDo/Backend/ToDoAPI.csproj",
       "packagesPath": "/Users/izabellamaria/.nuget/packages/",
-      "outputPath": "/Users/izabellamaria/ToDoAPI/obj/",
+      "outputPath": "/Users/izabellamaria/ToDo/Backend/obj/",
       "projectStyle": "PackageReference",
       "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
