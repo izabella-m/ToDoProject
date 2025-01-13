@@ -4,17 +4,18 @@ using ToDoAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<ITaskInterface, TaskService>();
-
-// Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ITaskInterface, TaskService>(); // Implementando interface no serviço
 
 // Configurar o DbContext com SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite("Data Source=TasksData.db");
 });
+
+// Add services to the container.
+builder.Services.AddControllers(); // Habilita controllers
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -27,7 +28,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "API de Lista de Tarefas rodando!");
+app.MapControllers(); // Mapeia endpoints dos controllers
 
 app.Run();
 
