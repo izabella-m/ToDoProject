@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoAPI.Data;
+using ToDoAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<ITaskInterface, TaskService>();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
