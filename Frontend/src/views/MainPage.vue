@@ -71,7 +71,7 @@ const closeAndSaveDialog = () => {
       description: descriptionTask.value,
       status: statusTask.value,
     });
-
+    resetForm(); // Reseta o formulário após salvar
     isDialogOpen.value = false;
   }
 };
