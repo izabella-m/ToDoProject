@@ -13,6 +13,7 @@
         <div class="dialog-content">
           <h2 class="titleDialog">Adicionar tarefa</h2>
           <input class="inputTitleField" v-model="nameTask" placeholder="Nome" />
+          <p v-if="!nameTask && isFormSubmitted" class="hintText">Digite o nome da tarefa no campo de título</p>
           <textarea class="inputDescriptionField" v-model="descriptionTask" placeholder="Descrição"></textarea>
           <select v-model="statusTask">
             <option disabled value="">Selecione o status da atividade</option>
@@ -20,6 +21,7 @@
             <option>Em andamento</option>
             <option>Concluido</option>
           </select>
+          <p v-if="!statusTask && isFormSubmitted" class="hintText">Selecione o status da atividade</p>
           <button class="buttonSave" @click="closeAndSaveDialog">Salvar</button> <!--adaptar para salvar--> 
           <button class="buttonCancel"  @click="closeDialog">cancelar</button>
         </div>
@@ -53,6 +55,7 @@ const tasks = ref([]);
 const nameTask = ref('');
 const descriptionTask = ref('');
 const statusTask = ref('');
+const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
 const path = mdiPlusCircleOutline; // Caminho do ícone SVG
 
 const openDialog = () => {
@@ -61,28 +64,29 @@ const openDialog = () => {
 
 const closeAndSaveDialog = () => {
   // Adicionar a tarefa à lista
-  if (nameTask.value && descriptionTask.value && statusTask.value) {
+  isFormSubmitted.value = true; 
+  if (nameTask.value && statusTask.value) {
     tasks.value.push({
       title: nameTask.value,
       description: descriptionTask.value,
       status: statusTask.value,
     });
 
-    // Limpar os campos
-    nameTask.value = '';
-    descriptionTask.value = '';
-    statusTask.value = '';
-
-    // Fechar o diálogo
     isDialogOpen.value = false;
-  } else {
-    console.log("Dados nao preenchjidos") // Validar erro
   }
 };
 
 const closeDialog = () => {
   isDialogOpen.value = false;
+  resetForm(); // Reseta o formulário ao fechar o diálogo
 }
+//Limpar os campos
+const resetForm = () => {
+  nameTask.value = "";
+  descriptionTask.value = "";
+  statusTask.value = "";
+  isFormSubmitted.value = false;
+};
 </script>
 
 <style scoped>
@@ -187,7 +191,15 @@ select {
   border-radius: 14px; 
   box-sizing: border-box; 
 }
-
+.hintText {
+  margin: 0;
+  margin-top: -13px;
+  padding: 0;
+  color: red;
+  font-size: 10px;
+  text-align: start;
+  
+}
 .buttonSave {
   width: 80%;
   padding: 10px;
