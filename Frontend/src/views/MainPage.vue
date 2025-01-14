@@ -11,22 +11,29 @@
     <div v-if="isDialogOpen" class="dialog-overlay" @click.self="closeDialog">
       <transition name="dialog-fade">
         <div class="dialog-content">
-          <h2>Adicionar tarefa</h2>
-          <input v-model="message" placeholder="Nome" />
-          <input v-model="message" placeholder="Descrição" />
-          <select v-model="selected">
-            <option disabled value="">Please select one</option>
-            <option>A</option>
-            <option>B</option>
-            <option>C</option>
+          <h2 class="titleDialog">Adicionar tarefa</h2>
+          <input class="inputTitleField" v-model="nameTask" placeholder="Nome" />
+          <textarea class="inputDescriptionField" v-model="descriptionTask" placeholder="Descrição"></textarea>
+          <select v-model="statusTask">
+            <option disabled value="">Selecione o status da atividade</option>
+            <option>Não iniciado</option>
+            <option>Em andamento</option>
+            <option>Concluido</option>
           </select>
-          <button @click="closeDialog">Fechar</button> <!--adaptar para salvar--> 
+          <button class="buttonSave" @click="closeAndSaveDialog">Salvar</button> <!--adaptar para salvar--> 
         </div>
       </transition>
     </div>
   </div>
-
   <hr>
+
+  <ul>
+    <li v-for="(task, index) in tasks" :key="index">
+      <h3>{{ task.title }}</h3>
+      <p>{{ task.description }}</p>
+      <p>Status: {{ task.status }}</p>
+    </li>
+  </ul>
 </div>
 </template>
 
@@ -35,15 +42,41 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiPlusCircleOutline } from '@mdi/js'; // Importação da biblioteca de ícones
 import { ref } from 'vue';
 
+// Estado do diálogo
 const isDialogOpen = ref(false);
+
+// Lista de tarefas
+const tasks = ref([]);
+
+// Dados da tarefa atual
+const nameTask = ref('');
+const descriptionTask = ref('');
+const statusTask = ref('');
 const path = mdiPlusCircleOutline; // Caminho do ícone SVG
 
 const openDialog = () => {
   isDialogOpen.value = true;
 };
 
-const closeDialog = () => {
-  isDialogOpen.value = false;
+const closeAndSaveDialog = () => {
+  // Adicionar a tarefa à lista
+  if (nameTask.value && descriptionTask.value && statusTask.value) {
+    tasks.value.push({
+      title: nameTask.value,
+      description: descriptionTask.value,
+      status: statusTask.value,
+    });
+
+    // Limpar os campos
+    nameTask.value = '';
+    descriptionTask.value = '';
+    statusTask.value = '';
+
+    // Fechar o diálogo
+    isDialogOpen.value = false;
+  } else {
+    console.log("Dados nao preenchjidos") // Validar erro
+  }
 };
 </script>
 
@@ -104,19 +137,18 @@ hr {
 
 /* Estilos para o conteúdo do diálogo */
 .dialog-content {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
   background-color: white;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   width: 300px;
+  height: 350px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: scale(0.8);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.dialog-content > * {
-  display: block;
-  margin-bottom: 10px;
 }
 
 /* Animação de transição para o dialog */
@@ -134,6 +166,33 @@ hr {
 .dialog-fade-enter-to {
   transform: scale(1);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.titleDialog {
+  padding-bottom: 25px;
+}
+
+.inputTitleField,
+.inputDescriptionField,
+select {
+  width: 80%; 
+  margin-bottom: 15px; 
+  padding: 10px; 
+  border: 1px solid #ccc;
+  border-radius: 14px; 
+  box-sizing: border-box; 
+}
+
+.buttonSave {
+  width: 80%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 </style>
