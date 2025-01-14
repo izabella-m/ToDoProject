@@ -16,7 +16,6 @@
           <p v-if="!nameTask && isFormSubmitted" class="hintText">Digite o nome da tarefa no campo de título</p>
           <textarea class="inputDescriptionField" v-model="descriptionTask" placeholder="Descrição"></textarea>
           <select v-model="statusTask">
-            <option disabled value="">Selecione o status da atividade</option>
             <option>Não iniciado</option>
             <option>Em andamento</option>
             <option>Concluido</option>
@@ -54,11 +53,12 @@ const tasks = ref([]);
 // Dados da tarefa atual
 const nameTask = ref('');
 const descriptionTask = ref('');
-const statusTask = ref('');
+const statusTask = ref('Não iniciado');
 const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
 const path = mdiPlusCircleOutline; // Caminho do ícone SVG
 
 const openDialog = () => {
+  statusTask.value = 'Não iniciado';
   isDialogOpen.value = true;
 };
 
