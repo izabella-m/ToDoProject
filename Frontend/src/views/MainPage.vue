@@ -28,18 +28,15 @@
     </div>
   </div>
   <hr>
+  <CardTaskComponent  :tasks="tasks"/>
 
-  <ul>
-    <li v-for="(task, index) in tasks" :key="index">
-      <h3>{{ task.title }}</h3>
-      <p>{{ task.description }}</p>
-      <p>Status: {{ task.status }}</p>
-    </li>
-  </ul>
+  
 </div>
 </template>
 
 <script setup>
+import CardTaskComponent from '/src/components/CardTaskComponent.vue';
+
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiPlusCircleOutline } from '@mdi/js'; // Importação da biblioteca de ícones
 import { ref } from 'vue';
@@ -87,6 +84,8 @@ const resetForm = () => {
   statusTask.value = "";
   isFormSubmitted.value = false;
 };
+
+
 </script>
 
 <style scoped>
@@ -222,6 +221,8 @@ select {
     cursor: pointer; 
     color: #e75e54;
 }
+
+
 
 </style>
   
