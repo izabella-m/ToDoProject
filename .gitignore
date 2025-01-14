@@ -1,0 +1,26 @@
+# Ignorar arquivos de build
+bin/
+obj/
+
+# Ignorar arquivos de banco de dados SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Ignorar arquivos específicos da IDE
+.idea/
+*.nuget.info
+
+# Ignorar arquivos temporários e de cache
+*.sourcelink.json
+*.AssemblyInfoInputs.cache
+*.pdb
+*.dll
+
+# Ignorar arquivos de referência e de build intermediário
+ref/
+refint/
+
+# Ignorar arquivos gerados automaticamente pelo Rider
+*.rider.*
+

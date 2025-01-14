@@ -19,4 +19,11 @@ public class TaskController : ControllerBase // or Controller
       var tasks = await _taskInterface.GetAllTasks(); 
       return Ok(tasks);
    }
+   
+   [HttpGet("GetTaskById/{idTask}")]
+   public async Task<ActionResult<ResponseModel<List<TaskModel>>>> GetTaskById(int idTask)
+   {
+      var task = await _taskInterface.GetTaskById(idTask); 
+      return Ok(task);
+   }
 }
