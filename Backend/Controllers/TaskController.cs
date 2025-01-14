@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ToDoAPI.Dtos;
 using ToDoAPI.Models;
 using ToDoAPI.Services;
 
@@ -21,9 +22,16 @@ public class TaskController : ControllerBase // or Controller
    }
    
    [HttpGet("GetTaskById/{idTask}")]
-   public async Task<ActionResult<ResponseModel<List<TaskModel>>>> GetTaskById(int idTask)
+   public async Task<ActionResult<ResponseModel<TaskModel>>> GetTaskById(int idTask)
    {
       var task = await _taskInterface.GetTaskById(idTask); 
+      return Ok(task);
+   }
+   
+   [HttpPost("CreateTask")]
+   public async Task<ActionResult<ResponseModel<TaskModel>>> CreateTask(CreateTaskDto createTaskDto)
+   {
+      var task = await _taskInterface.CreateTask(createTaskDto); 
       return Ok(task);
    }
 }
