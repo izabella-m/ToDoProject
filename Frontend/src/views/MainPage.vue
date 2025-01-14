@@ -21,6 +21,7 @@
             <option>Concluido</option>
           </select>
           <button class="buttonSave" @click="closeAndSaveDialog">Salvar</button> <!--adaptar para salvar--> 
+          <button class="buttonCancel"  @click="closeDialog">cancelar</button>
         </div>
       </transition>
     </div>
@@ -78,6 +79,10 @@ const closeAndSaveDialog = () => {
     console.log("Dados nao preenchjidos") // Validar erro
   }
 };
+
+const closeDialog = () => {
+  isDialogOpen.value = false;
+}
 </script>
 
 <style scoped>
@@ -186,13 +191,24 @@ select {
 .buttonSave {
   width: 80%;
   padding: 10px;
-  margin-top: 20px;
+  margin-top: 15px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 14px;
   cursor: pointer;
   font-size: 14px;
+}
+
+.buttonCancel {
+    background: none;
+    border: none;
+    color: inherit; 
+    font: inherit;
+    padding: 0; 
+    margin-top: 15px; 
+    cursor: pointer; 
+    color: #e75e54;
 }
 
 </style>
