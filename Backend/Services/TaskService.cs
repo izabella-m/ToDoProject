@@ -50,7 +50,6 @@ public class TaskService : ITaskInterface // Respeita as regras de task interfac
             
             response.Dados = task;
             response.Message = "Tarefa encontrada";
-            
             return response;
             
         } catch (Exception e)
@@ -79,8 +78,66 @@ public class TaskService : ITaskInterface // Respeita as regras de task interfac
             response.Dados = await _context.Tasks.ToListAsync();
             response.Message = "Tarefa criada com sucesso";
             return response;
+        } catch (Exception e)
+        {
+            response.Message = e.Message;
+            response.Status = false;
+            return response;
         }
-        catch (Exception e)
+    }
+
+    public async Task<ResponseModel<List<TaskModel>>> UpdateTask(EditTaskDto editTaskDto)
+    {
+        ResponseModel<List<TaskModel>> response = new ResponseModel<List<TaskModel>>();
+        try
+        {
+            var task = await _context.Tasks.FirstOrDefaultAsync(taskData => taskData.Id == editTaskDto.Id);
+            
+            if (task == null)
+            {
+                response.Message = "Nenhuma tarefa encontrada";
+                return response;
+            };
+
+            task.Title = editTaskDto.Title;
+            task.Description = editTaskDto.Description;
+            task.Status = editTaskDto.Status;
+            
+            _context.Update(task);
+            await _context.SaveChangesAsync();
+            
+            response.Dados = await _context.Tasks.ToListAsync();
+            response.Message = "Tarefa editada com sucesso";
+            return response;
+        } catch (Exception e)
+        {
+            response.Message = e.Message;
+            response.Status = false;
+            return response;
+        }
+    }
+
+    public async Task<ResponseModel<List<TaskModel>>> DeleteTask(int idTask)
+    {
+        ResponseModel<List<TaskModel>> response = new ResponseModel<List<TaskModel>>();
+        try
+        {
+            var task = await _context.Tasks.FirstOrDefaultAsync(taskData =>
+                taskData.Id == idTask);
+
+            if(task == null)
+            {
+                response.Message = "Nenhuma tarefa encontrada";
+                return response;
+            }
+            
+            _context.Remove(task);
+            await _context.SaveChangesAsync();
+            
+            response.Dados = await _context.Tasks.ToListAsync();
+            response.Message = "Tarefa removida com sucesso";
+            return response;
+        } catch (Exception e)
         {
             response.Message = e.Message;
             response.Status = false;
