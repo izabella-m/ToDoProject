@@ -29,9 +29,23 @@ public class TaskController : ControllerBase // or Controller
    }
    
    [HttpPost("CreateTask")]
-   public async Task<ActionResult<ResponseModel<TaskModel>>> CreateTask(CreateTaskDto createTaskDto)
+   public async Task<ActionResult<ResponseModel<List<TaskModel>>>> CreateTask(CreateTaskDto createTaskDto)
    {
       var task = await _taskInterface.CreateTask(createTaskDto); 
+      return Ok(task);
+   }
+   
+   [HttpPut("UpdateTask")]
+   public async Task<ActionResult<ResponseModel<List<TaskModel>>>> UpdateTask(EditTaskDto editTaskDto)
+   {
+      var task = await _taskInterface.UpdateTask(editTaskDto); 
+      return Ok(task);
+   }
+   
+   [HttpDelete("DeleteTask")]
+   public async Task<ActionResult<ResponseModel<List<TaskModel>>>> DeleteTask(int idTask)
+   {
+      var task = await _taskInterface.DeleteTask(idTask); 
       return Ok(task);
    }
 }
