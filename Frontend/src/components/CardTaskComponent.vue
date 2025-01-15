@@ -6,11 +6,17 @@
       class="taskCard">
       <div class="cardHeader">
         <h3 class="taskTitle">{{ task.title }}</h3>
-        <div>
+        <div class="taskOptions">
           <span class="taskStatus">{{ task.status }}</span>
           <button class="expandBtn" @click="toggleExpand(index)">
-            {{ expandedIndex === index ? '-' : '+' }}
+            <font-awesome-icon :icon="expandedIndex === index ? ['fas', 'chevron-up'] : ['fas', 'chevron-down']" />
           </button>
+          <button class="openBaloonBtn" @click="toggleBalloon">
+            <font-awesome-icon :icon="['fas', 'ellipsis-vertical']" />
+          </button>
+          <div v-if="isBalloonOpen" class="balloon">
+            <p>C</p>
+          </div>
         </div>
       </div>
       <div v-if="expandedIndex === index" class="cardDescription">
@@ -32,7 +38,11 @@ defineProps({
 });
 
 const expandedIndex = ref(null);
+const isBalloonOpen = ref(false);
 
+const toggleBalloon = () => {
+  isBalloonOpen.value = !isBalloonOpen.value;
+};
 const toggleExpand = (index) => {
   expandedIndex.value = expandedIndex.value === index ? null : index;
 };
@@ -40,16 +50,16 @@ const toggleExpand = (index) => {
 
 <style>
 .taskList {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
 }
   
 .taskCard {
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 14px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 16px;
@@ -89,6 +99,12 @@ const toggleExpand = (index) => {
   background-color: #f1f1f1;
 }
 
+.buttonMenu {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
 .cardDescription {
   margin-top: 12px;
   font-size: 14px;
@@ -111,5 +127,51 @@ const toggleExpand = (index) => {
   .cardDescription {
     font-size: 12px;
   }
+}
+
+
+.openBaloonBtn {
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative; 
+}
+
+.balloon {
+  position: absolute;
+  right: 0%; /* Faz o balão abrir para cima do botão */
+  top: 100%;
+  left: 100%;
+  transform: translateX(-50%);
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) scale(0.8);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.balloon p {
+  margin: 0;
+}
+
+.openBaloonBtn:focus + .balloon,
+.balloon {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.taskOptions {
+  position: relative;
+  display: inline-block;
 }
 </style>
