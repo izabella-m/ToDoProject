@@ -1,11 +1,12 @@
 <template>
-<div>
+<div class="mainPage">
   <div class="container">
     <div class="itemLeft">
-      <div class="titleHeader">Minha lista de tarefas</div>
+      <div class="titleHeader">To Do List</div>
       <div class="verticalBar"></div>
       <div class="inputSearchContainer">
-        <svg-icon class="iconMagnify" type="mdi" :path="path2"></svg-icon>
+        <font-awesome-icon class="iconMagnify" icon="search" />
+
         <input
           type="text"
           class="inputSearchField"
@@ -15,18 +16,27 @@
        </div>
     </div>
     
-      <div class="itemRight" @click="openDialog">
-        <svg-icon class="iconAdd" type="mdi" :path="path"></svg-icon>
-        <p>Adicionar item</p>
-      </div>
+    <div class="itemRight" @click="openDialog">
+      <svg-icon class="iconAdd" type="mdi" :path="path"></svg-icon>
+      <p>Adicionar item</p> 
+    </div>
 
     <div v-if="isDialogOpen" class="dialog-overlay" @click.self="closeDialog">
       <transition name="dialog-fade">
         <div class="dialog-content">
           <h2 class="titleDialog">Adicionar tarefa</h2>
-          <input class="inputTitleField" v-model="nameTask" placeholder="Nome" />
-          <p v-if="!nameTask && isFormSubmitted" class="hintText">Digite o nome da tarefa no campo de título</p>
+
+          <input class="inputTitleField" v-model="nameTask" placeholder="Nome"  maxlength="50"/>
+          <div class="infoRow">
+            <p v-if="!nameTask && isFormSubmitted" class="hintText">
+              Digite o nome da tarefa
+            </p>
+            <span class="limite">{{ nameTask.length }}</span>/50
+          </div>
+
           <textarea class="inputDescriptionField" v-model="descriptionTask" placeholder="Descrição"></textarea>
+          <!-- <span class="limite">{{ descriptionTask.length }}</span>/50 -->
+
           <select v-model="statusTask">
             <option>Não iniciado</option>
             <option>Em andamento</option>
@@ -40,20 +50,18 @@
     </div>
   </div>
   <hr>
-  <CardTaskComponent :tasks="filteredTasks" />
+  <div class="containerTasks">
+    <CardTaskComponent :tasks="filteredTasks" />
+  </div>
 
-  
+  <div class="teste">
+  </div>
 </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import CardTaskComponent from '/src/components/CardTaskComponent.vue';
-
-// Importação da biblioteca de ícones
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiPlusCircleOutline } from '@mdi/js'; 
-import { mdiMagnify } from '@mdi/js';
 
 // Estado do diálogo
 const isDialogOpen = ref(false);
@@ -63,8 +71,6 @@ const nameTask = ref('');
 const descriptionTask = ref('');
 const statusTask = ref('Não iniciado');
 const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
-const path = mdiPlusCircleOutline; // Caminho do ícone SVG
-const path2 = mdiMagnify; // Caminho do ícone SVG
 
 // Mock tasks
 const tasks = ref([
@@ -133,6 +139,7 @@ body {
   background-color: #FCFCFC;
 }
 */
+
 .container {
   display: flex;               
   justify-content: space-between; 
@@ -147,15 +154,18 @@ body {
 
 .titleHeader {
   font-weight: bold;
+  flex-grow: 1;  /* Faz o título ocupar o espaço restante na linha */
+  width: 150px;
+  color: ;
 }
 
 .verticalBar {
   width: 4px;
   height: 40px;
-  background-color: #000000;
+  background-color: #ccc;
   margin: 10px auto; 
-  margin-left: 10px;
-  margin-right: 20px;
+  margin-left: 0px;
+  margin-right: 25px;
 }
 
 .inputSearchContainer {
@@ -170,13 +180,13 @@ body {
   padding: 10px 10px 10px 40px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 12px;
   outline: none;
   transition: border-color 0.3s ease;
 }
 
 .inputSearchField:focus {
-  border-color: #007bff;
+  border-color: #8e46cd;
 }
 
 .iconMagnify {
@@ -187,7 +197,7 @@ body {
 }
 
 .inputSearchContainer:hover .iconMagnify {
-  color: #007bff; 
+  color: #8e46cd; 
 }
 
 .itemLeft {
@@ -268,14 +278,24 @@ select {
   border-radius: 14px; 
   box-sizing: border-box; 
 }
+.infoRow {
+  display: flex;
+  justify-content: space-between; /* Alinha os itens às extremidades */
+  align-items: center;
+  font-size: 12px;
+  min-height: 20px; /* Define uma altura mínima para evitar deslocamentos */
+}
+
 .hintText {
-  margin: 0;
-  margin-top: -13px;
-  padding: 0;
   color: red;
-  font-size: 10px;
-  text-align: start;
-  
+  margin: 0;
+  white-space: nowrap; /* Impede quebra de linha */
+  flex: 1;
+}
+
+.limite {
+  color: #555;
+  margin-left: auto;
 }
 .buttonSave {
   width: 80%;
@@ -300,6 +320,17 @@ select {
     color: #e75e54;
 }
 
+.containerTasks {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  width: 60%;
+  max-width: 100%; 
+  margin: 0 auto; 
+  padding: 0; 
+  height: auto;
+  box-sizing: border-box; 
+}
 
 </style>
   
