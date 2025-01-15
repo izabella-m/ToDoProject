@@ -16,21 +16,21 @@
           </button>
         
           <div v-if="isBalloonOpen[index]" class="balloon">
-            <font-awesome-icon :icon="['fas', 'pen-to-square']" />
+            <font-awesome-icon :icon="['fas', 'pen-to-square']" @click="openEditDialog"/>
             <font-awesome-icon 
               :icon="['fas', 'trash']" 
-              @click="openDialog" 
+              @click="openDeleteDialog" 
             />
           </div>
       
           <!-- Dialog de exclusão -->
-          <div v-if="isDialogOpen" class="dialog-overlay" @click.self="closeDialog">
+          <div v-if="isDialogOpen" class="dialog-overlay" @click.self="closeDeleteDialog">
             <div class="dialog-content">
               <h3 class="titleDialog">Excluir Tarefa</h3>
               <p>Deseja excluir esta tarefa?</p>
       
               <div>
-                <button @click="closeDialog">Cancelar</button>
+                <button @click="closeDeleteDialog">Cancelar</button>
                 <button @click="confirmDelete">Excluir</button>
               </div>
             </div>
@@ -47,6 +47,8 @@
 
 <script setup>
 import { ref } from 'vue';
+import { defineEmits } from 'vue';
+
 
 defineProps({
   tasks: {
@@ -55,22 +57,28 @@ defineProps({
   },
 });
 
+
 const expandedIndex = ref(null);
 const isBalloonOpen = ref([]);
 const isDialogOpen = ref(false); 
 const dialogType = ref(''); 
+const emit = defineEmits(['edit-action']);
 
-const openDialog = () => {
+const openEditDialog = () => {
+  emit('edit-action'); // Emite o evento para o pai
+};
+
+const openDeleteDialog = () => {
   dialogType.value = 'delete';
   isDialogOpen.value = true; 
 };
 
-const closeDialog = () => {
+const closeDeleteDialog = () => {
   isDialogOpen.value = false; 
 };
 
 const confirmDelete = () => {
-  closeDialog();
+  closeDeleteDialog();
 };
 
 const toggleBalloon = (index) => {

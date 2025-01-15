@@ -51,7 +51,7 @@
   </div>
   <hr>
   <div class="containerTasks">
-    <CardTaskComponent :tasks="filteredTasks" />
+    <CardTaskComponent :tasks="filteredTasks" @edit-action="handleEditAction" />
   </div>
 
   <div class="teste">
@@ -79,6 +79,7 @@ const tasks = ref([
   { id: 3, title: "Fazer exercícios", status: "Concluído", description: "Treino de academia" },
 ]);
 
+
 const searchQuery = ref("");
 
 // Filtro
@@ -92,6 +93,9 @@ const filteredTasks = computed(() => {
   });
 });
 
+const openEditDialog = () => {
+  console.log("teste")
+}
 
 const openDialog = () => {
   statusTask.value = 'Não iniciado';
@@ -124,6 +128,9 @@ const resetForm = () => {
   isFormSubmitted.value = false;
 };
 
+const handleEditAction = () => { // Importado com emit
+  isDialogOpen.value = true; // Update de dados
+};
 
 </script>
 
