@@ -1,7 +1,19 @@
 <template>
 <div>
   <div class="container">
-    <div class="itemLeft">Minha lista de tarefas</div>
+    <div class="itemLeft">
+      <div class="titleHeader">Minha lista de tarefas</div>
+      <div class="verticalBar"></div>
+      <div class="inputSearchContainer">
+        <svg-icon class="iconMagnify" type="mdi" :path="path2"></svg-icon>
+        <input
+          type="text"
+          class="inputSearchField"
+          placeholder="Pesquisar tarefa"
+          v-model="searchQuery"
+        />     
+       </div>
+    </div>
     
       <div class="itemRight" @click="openDialog">
         <svg-icon class="iconAdd" type="mdi" :path="path"></svg-icon>
@@ -28,24 +40,23 @@
     </div>
   </div>
   <hr>
-  <CardTaskComponent  :tasks="tasks"/>
+  <CardTaskComponent :tasks="filteredTasks" />
 
   
 </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
 import CardTaskComponent from '/src/components/CardTaskComponent.vue';
 
+// Importação da biblioteca de ícones
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiPlusCircleOutline } from '@mdi/js'; // Importação da biblioteca de ícones
-import { ref } from 'vue';
+import { mdiPlusCircleOutline } from '@mdi/js'; 
+import { mdiMagnify } from '@mdi/js';
 
 // Estado do diálogo
 const isDialogOpen = ref(false);
-
-// Lista de tarefas
-const tasks = ref([]);
 
 // Dados da tarefa atual
 const nameTask = ref('');
@@ -53,6 +64,28 @@ const descriptionTask = ref('');
 const statusTask = ref('Não iniciado');
 const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
 const path = mdiPlusCircleOutline; // Caminho do ícone SVG
+const path2 = mdiMagnify; // Caminho do ícone SVG
+
+// Mock tasks
+const tasks = ref([
+  { id: 1, title: "Comprar mantimentos", status: "Não iniciado", description: "Lista de compras para o mercado" },
+  { id: 2, title: "Ler um livro", status: "Em andamento", description: "Livro de ficção científica" },
+  { id: 3, title: "Fazer exercícios", status: "Concluído", description: "Treino de academia" },
+]);
+
+const searchQuery = ref("");
+
+// Filtro
+const filteredTasks = computed(() => {
+  const query = searchQuery.value.toLowerCase();
+  return tasks.value.filter((task) => {
+    return (
+      task.title.toLowerCase().includes(query) || // Busca no título
+      String(task.id).includes(query)             // Busca no ID
+    );
+  });
+});
+
 
 const openDialog = () => {
   statusTask.value = 'Não iniciado';
@@ -112,9 +145,54 @@ body {
   padding: 10px;             
 }
 
-.itemLeft {
-  padding: 10px;
+.titleHeader {
   font-weight: bold;
+}
+
+.verticalBar {
+  width: 4px;
+  height: 40px;
+  background-color: #000000;
+  margin: 10px auto; 
+  margin-left: 10px;
+  margin-right: 20px;
+}
+
+.inputSearchContainer {
+  position: relative; 
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.inputSearchField {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.inputSearchField:focus {
+  border-color: #007bff;
+}
+
+.iconMagnify {
+  position: absolute;
+  left: 10px;
+  font-size: 18px;
+  color: #aaa;
+}
+
+.inputSearchContainer:hover .iconMagnify {
+  color: #007bff; 
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center; 
 }
 
 .itemRight {
@@ -221,7 +299,6 @@ select {
     cursor: pointer; 
     color: #e75e54;
 }
-
 
 
 </style>
