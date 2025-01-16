@@ -12,6 +12,7 @@
           class="inputSearchField"
           placeholder="Pesquisar tarefa"
           v-model="searchQuery"
+          @input="searchTask"
         />     
        </div>
     </div>
@@ -54,36 +55,31 @@
     <CardTaskComponent :tasks="filteredTasks" @edit-action="handleEditAction" />
   </div>
 
-  <div class="teste">
+  <!--TESTE-->
+  <div>
+    <h1>Lista de Tarefas</h1>
+    <ul v-if="tasks.length">
+      <li v-for="task in tasks" :key="task.id">
+        {{ task.title }}
+      </li>
+    </ul>
+    <p v-else>Carregando tarefas...</p>
   </div>
 </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import CardTaskComponent from '/src/components/CardTaskComponent.vue';
+import { getTasks, getTaskById } from '../services/taskService'; 
 
-// Estado do diálogo
-const isDialogOpen = ref(false);
+const tasks = ref([]); // Armazena as tarefas
+const searchQuery = ref(""); // Campo de busca
 
-// Dados da tarefa atual
-const nameTask = ref('');
-const descriptionTask = ref('');
-const statusTask = ref('Não iniciado');
-const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
-
-// Mock tasks
-const tasks = ref([
-  { id: 1, title: "Comprar mantimentos", status: "Não iniciado", description: "Lista dcxdeswaaaaaaaaaaaaa cfedwhiygbfcvrewdpiy9obg;op9frd  fweiu9freh[e compras para o mercado" },
-  { id: 2, title: "Ler um livro", status: "Em andamento", description: "Livro de ficçãco científica" },
-  { id: 3, title: "Fazer exercícios", status: "Concluído", description: "Treino de academia" },
-]);
-
-
-const searchQuery = ref("");
-
-// Filtro
 const filteredTasks = computed(() => {
+  if (!Array.isArray(tasks.value)) {
+    return []; // Retorna um array vazio se tasks.value não for um array
+  }
   const query = searchQuery.value.toLowerCase();
   return tasks.value.filter((task) => {
     return (
@@ -92,6 +88,77 @@ const filteredTasks = computed(() => {
     );
   });
 });
+
+const loadTasks = async () => {
+    try {
+        const response = await getTasks();
+        console.log(response); 
+        if (Array.isArray(response.dados)) {
+            tasks.value = response.dados;
+        } else {
+            console.error("A resposta não contém um array em 'dados':", response);
+        }
+    } catch (error) {
+        console.error("Erro ao carregar tarefas:", error);
+    }
+};
+
+const searchTask = async () => {
+  const query = searchQuery.value.trim();
+  
+  if (!query) {
+    // Se o campo de busca estiver vazio, carrega todas as tarefas
+    loadTasks();
+  } else {
+    // Verifica se a pesquisa é por ID
+    const id = parseInt(query, 10);
+    if (!isNaN(id)) {
+      // Se for um número (ID), busca pela tarefa pelo ID
+      try {
+        const task = await getTaskById(id);
+        tasks.value = task ? [task] : []; // Atualiza tarefas com o item encontrado ou vazio
+      } catch (error) {
+        console.error(`Erro ao buscar tarefa com ID ${id}:`, error);
+        tasks.value = []; // Limpa se erro ocorrer
+      }
+    } else {
+      // Caso contrário, faz a busca por todas as tarefas
+      loadTasks();
+    }
+  }
+};
+
+onMounted(() => {
+  loadTasks(); // Carrega as tarefas ao montar o componente
+});
+
+// Filtra tarefas com base na busca (JAVASCRIPT)
+// const filteredTasks = computed(() => {
+//     if (!Array.isArray(tasks.value)) {
+//         return []; // Retorna um array vazio se tasks.value não for um array
+//     }
+//     const query = searchQuery.value.toLowerCase();
+//     return tasks.value.filter((task) => {
+//         return (
+//             task.title.toLowerCase().includes(query) || // Busca no título
+//             String(task.id).includes(query)             // Busca no ID
+//         );
+//     });
+// });
+
+const isDialogOpen = ref(false);
+const nameTask = ref('');
+const descriptionTask = ref('');
+const statusTask = ref('Não iniciado');
+const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
+
+// Mock tasks
+// const tasks = ref([
+//   { id: 1, title: "Comprar mantimentos", status: "Não iniciado", description: "Lista dcxdeswaaaaaaaaaaaaa cfedwhiygbfcvrewdpiy9obg;op9frd  fweiu9freh[e compras para o mercado" },
+//   { id: 2, title: "Ler um livro", status: "Em andamento", description: "Livro de ficçãco científica" },
+//   { id: 3, title: "Fazer exercícios", status: "Concluído", description: "Treino de academia" },
+// ]);
+
 
 const openEditDialog = () => {
   console.log("teste")
