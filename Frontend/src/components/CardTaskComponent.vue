@@ -2,13 +2,13 @@
   <div class="taskList">
     <div 
       v-for="(task, index) in tasks" 
-      :key="index" 
+      :key="task.id" 
       class="taskCard">
       <div class="cardHeader">
         <h3 class="taskTitle">{{ task.title }}</h3>
         <div class="taskOptions">
           <!-- <span class="cardStatus">
-            <p class="taskStatus">{{ task.status }}</p>
+            <p class="taskStatus">{{ getStatus(task.status) }}</p>
           </span> -->
           <button class="expandBtn" @click="toggleExpand(index)">
             <font-awesome-icon class="chevronStyle" :icon="expandedIndex === index ? ['fas', 'chevron-up'] : ['fas', 'chevron-down']" />
@@ -42,7 +42,7 @@
       </div>
       <div v-if="expandedIndex === index" class="cardDescription">
         <p class="idTaskInDescription">Tarefa {{ task.id }}</p>
-        <p class="textDescription">{{ task.description }}</p>
+        <p class="textDescription">{{ task.description || 'Sem descrição' }}</p>
       </div>
     </div>
   </div>
@@ -89,6 +89,15 @@ const toggleBalloon = (index) => {
 };
 const toggleExpand = (index) => {
   expandedIndex.value = expandedIndex.value === index ? null : index;
+};
+
+const getStatus = (status) => {
+  const statusMap = {
+    NotStarted: 'Não Iniciado',
+    InProgress: 'Em Andamento',
+    Completed: 'Concluído',
+  };
+  return statusMap[status] || 'Desconhecido';
 };
 
 </script>
