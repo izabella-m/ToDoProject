@@ -7,17 +7,20 @@
       <div class="cardHeader">
         <h3 class="taskTitle">{{ task.title }}</h3>
         <div class="taskOptions">
-          <span class="taskStatus">{{ task.status }}</span>
+          <!-- <span class="cardStatus">
+            <p class="taskStatus">{{ task.status }}</p>
+          </span> -->
           <button class="expandBtn" @click="toggleExpand(index)">
-            <font-awesome-icon :icon="expandedIndex === index ? ['fas', 'chevron-up'] : ['fas', 'chevron-down']" />
+            <font-awesome-icon class="chevronStyle" :icon="expandedIndex === index ? ['fas', 'chevron-up'] : ['fas', 'chevron-down']" />
           </button>
           <button class="openBaloonBtn" @click="toggleBalloon(index)">
-            <font-awesome-icon :icon="['fas', 'ellipsis-vertical']" />
+            <font-awesome-icon class="chevronStyle" :icon="['fas', 'ellipsis-vertical']" />
           </button>
         
           <div v-if="isBalloonOpen[index]" class="balloon">
-            <font-awesome-icon :icon="['fas', 'pen-to-square']" @click="openEditDialog"/>
+            <font-awesome-icon class="iconEdit" :icon="['fas', 'pen-to-square']" @click="openEditDialog"/>
             <font-awesome-icon 
+              class="iconTrash"
               :icon="['fas', 'trash']" 
               @click="openDeleteDialog" 
             />
@@ -25,21 +28,21 @@
       
           <!-- Dialog de exclusão -->
           <div v-if="isDialogOpen" class="dialog-overlay" @click.self="closeDeleteDialog">
-            <div class="dialog-content">
-              <h3 class="titleDialog">Excluir Tarefa</h3>
-              <p>Deseja excluir esta tarefa?</p>
+            <div class="dialogDeleteTask">
+              <h3 class="titleDialogDeleteTask">Excluir Tarefa</h3>
+              <p class="textConfirmeDelete">Deseja excluir esta tarefa?</p>
       
               <div>
-                <button @click="closeDeleteDialog">Cancelar</button>
-                <button @click="confirmDelete">Excluir</button>
+                <button class="buttonCancelDelete" @click="closeDeleteDialog">Cancelar</button>
+                <button class="buttonConfirmDelete" @click="confirmDelete">Excluir</button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div v-if="expandedIndex === index" class="cardDescription">
-        <p>{{ task.id }}</p>
-        <p>{{ task.description }}</p>
+        <p class="idTaskInDescription">Tarefa {{ task.id }}</p>
+        <p class="textDescription">{{ task.description }}</p>
       </div>
     </div>
   </div>
@@ -96,16 +99,17 @@ const toggleExpand = (index) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top: 30px;
 }
   
 .taskCard {
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 16px;
+  border: 1px solid #f2f2f2;
+  padding: 15px;
+  align-content: center;
 }
   
 .cardHeader {
@@ -115,8 +119,8 @@ const toggleExpand = (index) => {
 }
 
 .taskTitle {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 600;
   margin: 0;
 }
 
@@ -125,6 +129,13 @@ const toggleExpand = (index) => {
   font-weight: 500;
   color: #555;
 }
+
+.taskOptions {
+  position: relative;
+  display: inline-block;
+}
+
+
 
 .expandBtn {
   background: none;
@@ -139,6 +150,13 @@ const toggleExpand = (index) => {
   
 .expandBtn:hover {
   background-color: #f1f1f1;
+}
+
+.chevronStyle {
+  color: #636e71;
+  margin-left: 4px;
+  margin-right: 4px;
+  font-size: 13px;
 }
 
 .buttonMenu {
@@ -171,16 +189,52 @@ const toggleExpand = (index) => {
   }
 }
 
+.titleDialogDeleteTask {
+  color: #832b2b;
+  padding-bottom: 0px;
+  font-size: 20px;
+}
+
+.textConfirmeDelete {
+  padding: 0%;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.buttonCancelDelete {
+  width: 90%;
+  height: 40px;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #01b894;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.buttonConfirmDelete {
+  background: none;
+  border: none;
+  color: inherit; 
+  font: inherit;
+  padding: 0; 
+  margin-bottom: 15px;
+  cursor: pointer; 
+  color: #ccc;
+}
 
 .openBaloonBtn {
-  position: absolute;
-  width: 0;
-  height: 0;
+  margin-left: 4px;
+  margin-right: 4px;
+  font-size: 13px;
+  position: relative; 
   padding: 0;
   border: none;
   font-size: 16px;
   cursor: pointer;
-  position: relative; 
 }
 
 .balloon {
@@ -194,7 +248,6 @@ const toggleExpand = (index) => {
   border-radius: 8px;
   padding: 10px;
   min-width: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   opacity: 0;
   visibility: hidden;
   transform: translateX(-50%) scale(0.8);
@@ -212,6 +265,15 @@ const toggleExpand = (index) => {
   transform: translateX(-50%) scale(1);
 }
 
+.iconEdit {
+  color: #007bff;
+  margin-bottom: 3px;
+}
+
+.iconTrash {
+  color: #832b2b;
+}
+
 .dialog-overlay {
   position: fixed;
   top: 0;
@@ -226,14 +288,14 @@ const toggleExpand = (index) => {
 }
 
 /* Estilos para o conteúdo do dialog */
-.dialog-content {
+.dialogDeleteTask {
   display: flex;
   flex-direction: column; 
   align-items: center; 
   background-color: white;
-  padding: 20px;
+  padding: 10px;
   border-radius: 20px;
-  width: 300px;
+  width: 250px;
   height: 200px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -258,12 +320,15 @@ const toggleExpand = (index) => {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-.titleDialog {
-  padding-bottom: 25px;
+
+
+.idTaskInDescription {
+  font-size: 10px;
+  color: #ccc;
 }
 
-.taskOptions {
-  position: relative;
-  display: inline-block;
+.textDescription {
+  color: #636E71;
+  font-size: 12px;  
 }
 </style>

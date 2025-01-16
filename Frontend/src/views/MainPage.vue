@@ -17,7 +17,7 @@
     </div>
     
     <div class="itemRight" @click="openDialog">
-      <svg-icon class="iconAdd" type="mdi" :path="path"></svg-icon>
+      <font-awesome-icon class="iconAdd" :icon="['fas', 'plus']" />
       <p>Adicionar item</p> 
     </div>
 
@@ -74,8 +74,8 @@ const isFormSubmitted = ref(false); // Para controlar se o formulário foi subme
 
 // Mock tasks
 const tasks = ref([
-  { id: 1, title: "Comprar mantimentos", status: "Não iniciado", description: "Lista de compras para o mercado" },
-  { id: 2, title: "Ler um livro", status: "Em andamento", description: "Livro de ficção científica" },
+  { id: 1, title: "Comprar mantimentos", status: "Não iniciado", description: "Lista dcxdeswaaaaaaaaaaaaa cfedwhiygbfcvrewdpiy9obg;op9frd  fweiu9freh[e compras para o mercado" },
+  { id: 2, title: "Ler um livro", status: "Em andamento", description: "Livro de ficçãco científica" },
   { id: 3, title: "Fazer exercícios", status: "Concluído", description: "Treino de academia" },
 ]);
 
@@ -163,13 +163,12 @@ body {
   font-weight: bold;
   flex-grow: 1;  /* Faz o título ocupar o espaço restante na linha */
   width: 150px;
-  color: ;
 }
 
 .verticalBar {
   width: 4px;
   height: 40px;
-  background-color: #ccc;
+  background-color: #f2f2f2;
   margin: 10px auto; 
   margin-left: 0px;
   margin-right: 25px;
@@ -184,16 +183,14 @@ body {
 
 .inputSearchField {
   width: 100%;
-  padding: 10px 10px 10px 40px;
+  height: 40px;
+  padding: 0px 0px 0px 40px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
   border-radius: 12px;
   outline: none;
   transition: border-color 0.3s ease;
-}
-
-.inputSearchField:focus {
-  border-color: #8e46cd;
 }
 
 .iconMagnify {
@@ -201,10 +198,6 @@ body {
   left: 10px;
   font-size: 18px;
   color: #aaa;
-}
-
-.inputSearchContainer:hover .iconMagnify {
-  color: #8e46cd; 
 }
 
 .itemLeft {
@@ -216,13 +209,30 @@ body {
   display: flex;
   align-items: center; 
   cursor: pointer;
-  font-weight: bold;
+  background-color: #01b894;
+  border-radius: 16px;
+  height: 40px;
+  padding-left: 4px;
+  padding-right: 20px;
+}
+
+.itemRight p {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+.iconAdd {
+  color: white;
+  font-size: 16px;
+  margin: 8px;
 }
 
 hr {
   display: flex;              
   width: 60%;                 
   margin: 0 auto;        
+  border: 1px solid;
+  color: #f2f2f2;
 }
 
 .dialog-overlay {
@@ -244,10 +254,10 @@ hr {
   flex-direction: column; 
   align-items: center; 
   background-color: white;
-  padding: 20px;
+  padding: 5px;
   border-radius: 20px;
   width: 300px;
-  height: 350px;
+  height: 400px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: scale(0.8);
@@ -272,16 +282,18 @@ hr {
 }
 
 .titleDialog {
-  padding-bottom: 25px;
+  padding-bottom: 20px;
+  font-size: 20px;
 }
 
 .inputTitleField,
 .inputDescriptionField,
 select {
-  width: 80%; 
+  width: 90%; 
   margin-bottom: 15px; 
   padding: 10px; 
   border: 1px solid #ccc;
+  background-color: #f2f2f2;
   border-radius: 14px; 
   box-sizing: border-box; 
 }
@@ -304,16 +316,19 @@ select {
   color: #555;
   margin-left: auto;
 }
+
 .buttonSave {
-  width: 80%;
+  width: 90%;
+  height: 40px;
   padding: 10px;
   margin-top: 15px;
-  background-color: #007bff;
+  background-color: #01b894;
   color: white;
   border: none;
   border-radius: 14px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .buttonCancel {
@@ -323,8 +338,9 @@ select {
     font: inherit;
     padding: 0; 
     margin-top: 15px; 
+    margin-bottom: 15px;
     cursor: pointer; 
-    color: #e75e54;
+    color: #ccc;
 }
 
 .containerTasks {
