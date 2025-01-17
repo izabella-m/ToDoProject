@@ -4,6 +4,16 @@ using ToDoAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // Substitua pela URL do seu frontend
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddScoped<ITaskInterface, TaskService>(); // Implementando interface no serviço
 
 // Configurar o DbContext com SQLite
@@ -13,8 +23,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 // Add services to the container.
-builder.Services.AddControllers(); // Habilita controllers
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Desabilitar camelCase se necessário
+    });builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
@@ -25,6 +38,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowFrontend");
+app.UseAuthorization();
+
 
 app.UseHttpsRedirection();
 
