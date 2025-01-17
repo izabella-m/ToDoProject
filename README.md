@@ -1,5 +1,8 @@
 Documentação - Desafio Técnico
 
+O projeto é uma aplicação de To-Do List que permite criar, visualizar, filtrar e apagar tarefas. Desenvolvido em .NET com arquitetura baseada em Repository Pattern, utiliza Entity Framework Core para persistência de dados e SQLite como banco de dados. A API RESTful disponibiliza endpoints para gerenciamento das tasks, seguindo boas práticas de desenvolvimento. No front-end, o projeto foi desenvolvido com Vue.js, com funcionalidades como adicionar, visualizar, filtrar e apagar tarefas diretamente na interface.
+Foram implementados diálogos modais para adicionar tarefas. A comunicação com a API é feita via HTTP para garantir a integração eficiente entre o front-end e o back-end.
+
 1. Instalação e Configuração
 
    1.1 Requisitos
@@ -52,7 +55,7 @@ Frontend: Para rodar o frontend execute:
    
 2.1 Endpoint:
             
-    GET /tasks
+    GET /GetTasks
   - Descrição: Retorna uma lista de todas as tarefas.
   - Requisição:
   - Método: GET
@@ -62,7 +65,7 @@ Frontend: Para rodar o frontend execute:
 
 2.2 Endpoint:
 
-    GET /tasks/{id}
+    GET /GetTasksById/{idTask}
  - Descrição: Retorna os detalhes de uma tarefa específica.
 - Requisição:
 - Método: GET
@@ -74,7 +77,7 @@ Frontend: Para rodar o frontend execute:
 
 2.3 Endpoint: 
         
-    POST /tasks
+    POST /Createtask
 - Descrição: Cria uma nova tarefa.
 - Requisição:
 - Método: POST
@@ -84,7 +87,7 @@ Frontend: Para rodar o frontend execute:
 
 2.4 Endpoint:
     
-    PUT /tasks/{id}
+    PUT /UpdateTask
 - Descrição: Atualiza os dados de uma tarefa existente (Não utilizado na aplicação)
 - Requisição:
 - Método: PUT
@@ -94,7 +97,7 @@ Frontend: Para rodar o frontend execute:
 
 2.5 Endpoint:
     
-    DELETE /tasks/{id}
+    DELETE  /DeleteTask
 - Descrição: Exclui uma tarefa existente.
 - Requisição:
 - Método: DELETE
