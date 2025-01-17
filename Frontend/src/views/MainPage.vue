@@ -6,7 +6,6 @@
       <div class="verticalBar"></div>
       <div class="inputSearchContainer">
         <font-awesome-icon class="iconMagnify" icon="search" />
-
         <input
           type="text"
           class="inputSearchField"
@@ -34,17 +33,16 @@
             </p>
             <span class="limite">{{ nameTask.length }}</span>/50
           </div>
-
           <textarea class="inputDescriptionField" v-model="descriptionTask" placeholder="Descrição"></textarea>
           <!-- <span class="limite">{{ descriptionTask.length }}</span>/50 -->
 
           <select v-model="statusTask">
-            <option>Não iniciado</option>
-            <option>Em andamento</option>
-            <option>Concluido</option>
+            <option :value="0">Não iniciado</option>
+            <option :value="1">Em andamento</option>
+            <option :value="2">Concluído</option>
           </select>
           <p v-if="!statusTask && isFormSubmitted" class="hintText">Selecione o status da atividade</p>
-          <button class="buttonSave" @click="closeAndSaveDialog">Salvar</button> <!--adaptar para salvar--> 
+          <button class="buttonSave" @click="handleSave">Salvar</button>  
           <button class="buttonCancel"  @click="closeDialog">cancelar</button>
         </div>
       </transition>
@@ -52,18 +50,7 @@
   </div>
   <hr>
   <div class="containerTasks">
-    <CardTaskComponent :tasks="filteredTasks" @edit-action="handleEditAction" />
-  </div>
-
-  <!--TESTE-->
-  <div>
-    <h1>Lista de Tarefas</h1>
-    <ul v-if="tasks.length">
-      <li v-for="task in tasks" :key="task.id">
-        {{ task.title }}
-      </li>
-    </ul>
-    <p v-else>Carregando tarefas...</p>
+    <CardTaskComponent :tasks="filteredTasks" @edit-action="handleEditAction" @delete-task="handleDeleteTask" />
   </div>
 </div>
 </template>
@@ -72,6 +59,7 @@
 import { ref, computed, onMounted } from 'vue';
 import CardTaskComponent from '/src/components/CardTaskComponent.vue';
 import { getTasks, getTaskById } from '../services/taskService'; 
+import axios from 'axios';
 
 const tasks = ref([]); // Armazena as tarefas
 const searchQuery = ref(""); // Campo de busca
@@ -90,104 +78,90 @@ const filteredTasks = computed(() => {
 });
 
 const loadTasks = async () => {
-    try {
-        const response = await getTasks();
-        console.log(response); 
-        if (Array.isArray(response.dados)) {
-            tasks.value = response.dados;
-        } else {
-            console.error("A resposta não contém um array em 'dados':", response);
-        }
-    } catch (error) {
-        console.error("Erro ao carregar tarefas:", error);
-    }
+  try {
+      const response = await getTasks();
+      console.log(response); 
+      if (Array.isArray(response.dados)) {
+          tasks.value = response.dados;
+      } else {
+          console.error("A resposta não contém um array em 'dados':", response);
+      }
+  } catch (error) {
+      console.error("Erro ao carregar tarefas:", error);
+  }
 };
 
 const searchTask = async () => {
   const query = searchQuery.value.trim();
   
   if (!query) {
-    // Se o campo de busca estiver vazio, carrega todas as tarefas
     loadTasks();
   } else {
     // Verifica se a pesquisa é por ID
     const id = parseInt(query, 10);
     if (!isNaN(id)) {
-      // Se for um número (ID), busca pela tarefa pelo ID
       try {
         const task = await getTaskById(id);
         tasks.value = task ? [task] : []; // Atualiza tarefas com o item encontrado ou vazio
       } catch (error) {
         console.error(`Erro ao buscar tarefa com ID ${id}:`, error);
-        tasks.value = []; // Limpa se erro ocorrer
+        tasks.value = []; 
       }
     } else {
-      // Caso contrário, faz a busca por todas as tarefas
       loadTasks();
     }
   }
 };
-
+const handleDeleteTask = (taskId) => {
+  tasks.value = tasks.value.filter(task => task.id !== taskId);
+};
 onMounted(() => {
   loadTasks(); // Carrega as tarefas ao montar o componente
 });
 
-// Filtra tarefas com base na busca (JAVASCRIPT)
-// const filteredTasks = computed(() => {
-//     if (!Array.isArray(tasks.value)) {
-//         return []; // Retorna um array vazio se tasks.value não for um array
-//     }
-//     const query = searchQuery.value.toLowerCase();
-//     return tasks.value.filter((task) => {
-//         return (
-//             task.title.toLowerCase().includes(query) || // Busca no título
-//             String(task.id).includes(query)             // Busca no ID
-//         );
-//     });
-// });
-
 const isDialogOpen = ref(false);
 const nameTask = ref('');
 const descriptionTask = ref('');
-const statusTask = ref('Não iniciado');
+const statusTask = ref(null);
 const isFormSubmitted = ref(false); // Para controlar se o formulário foi submetido
 
-// Mock tasks
-// const tasks = ref([
-//   { id: 1, title: "Comprar mantimentos", status: "Não iniciado", description: "Lista dcxdeswaaaaaaaaaaaaa cfedwhiygbfcvrewdpiy9obg;op9frd  fweiu9freh[e compras para o mercado" },
-//   { id: 2, title: "Ler um livro", status: "Em andamento", description: "Livro de ficçãco científica" },
-//   { id: 3, title: "Fazer exercícios", status: "Concluído", description: "Treino de academia" },
-// ]);
+const handleSave = async () => {
+  isFormSubmitted.value = true;
 
+  const formData = new FormData();
+  formData.append('Title', nameTask.value);
+  formData.append('Description', descriptionTask.value || '');
+  formData.append('Status', statusTask.value);
 
-const openEditDialog = () => {
-  console.log("teste")
-}
+  try {
+    const response = await axios.post('http://localhost:5168/CreateTask', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    });
+    console.log('Tarefa criada com sucesso:', response.data);
+  } catch (error) {
+    console.error('Erro ao salvar a tarefa:', error);
+  }
+  resetForm();
+  closeDialog();
+};
+
+// Implementação editar
+// const openEditDialog = () => {
+//   console.log("teste")
+// }
 
 const openDialog = () => {
   statusTask.value = 'Não iniciado';
   isDialogOpen.value = true;
 };
 
-const closeAndSaveDialog = () => {
-  // Adicionar a tarefa à lista
-  isFormSubmitted.value = true; 
-  if (nameTask.value && statusTask.value) {
-    tasks.value.push({
-      title: nameTask.value,
-      description: descriptionTask.value,
-      status: statusTask.value,
-    });
-    resetForm(); // Reseta o formulário após salvar
-    isDialogOpen.value = false;
-  }
-};
-
 const closeDialog = () => {
   isDialogOpen.value = false;
   resetForm(); // Reseta o formulário ao fechar o diálogo
 }
-//Limpar os campos
+
 const resetForm = () => {
   nameTask.value = "";
   descriptionTask.value = "";
@@ -207,12 +181,6 @@ const handleEditAction = () => { // Importado com emit
 * {
   font-family: Inter;
 }
-
-/*
-body {
-  background-color: #FCFCFC;
-}
-*/
 
 .container {
   display: flex;               
@@ -364,6 +332,7 @@ select {
   border-radius: 14px; 
   box-sizing: border-box; 
 }
+
 .infoRow {
   display: flex;
   justify-content: space-between; /* Alinha os itens às extremidades */
@@ -399,15 +368,15 @@ select {
 }
 
 .buttonCancel {
-    background: none;
-    border: none;
-    color: inherit; 
-    font: inherit;
-    padding: 0; 
-    margin-top: 15px; 
-    margin-bottom: 15px;
-    cursor: pointer; 
-    color: #ccc;
+  background: none;
+  border: none;
+  color: inherit; 
+  font: inherit;
+  padding: 0; 
+  margin-top: 15px; 
+  margin-bottom: 15px;
+  cursor: pointer; 
+  color: #ccc;
 }
 
 .containerTasks {

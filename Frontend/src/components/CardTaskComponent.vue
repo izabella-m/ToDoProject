@@ -7,35 +7,34 @@
       <div class="cardHeader">
         <h3 class="taskTitle">{{ task.title }}</h3>
         <div class="taskOptions">
-          <!-- <span class="cardStatus">
-            <p class="taskStatus">{{ getStatus(task.status) }}</p>
-          </span> -->
-          <button class="expandBtn" @click="toggleExpand(index)">
-            <font-awesome-icon class="chevronStyle" :icon="expandedIndex === index ? ['fas', 'chevron-up'] : ['fas', 'chevron-down']" />
-          </button>
-          <button class="openBaloonBtn" @click="toggleBalloon(index)">
-            <font-awesome-icon class="chevronStyle" :icon="['fas', 'ellipsis-vertical']" />
-          </button>
-        
+          <div class="actionTaskOptions">
+            <p :class="statusClass(task.status)">
+              {{ statusText(task.status) }}
+            </p>
+            <button class="expandBtn" @click="toggleExpand(index)">
+              <font-awesome-icon class="chevronStyle" :icon="expandedIndex === index ? ['fas', 'chevron-up'] : ['fas', 'chevron-down']" />
+            </button>
+            
+            <button class="openBaloonBtn" @click="toggleBalloon(index)">
+              <font-awesome-icon class="chevronStyle" :icon="['fas', 'ellipsis-vertical']" />
+            </button>
+          </div>
           <div v-if="isBalloonOpen[index]" class="balloon">
             <font-awesome-icon class="iconEdit" :icon="['fas', 'pen-to-square']" @click="openEditDialog"/>
             <font-awesome-icon 
               class="iconTrash"
               :icon="['fas', 'trash']" 
-              @click="openDeleteDialog" 
+              @click="openDeleteDialog(task.id)" 
             />
           </div>
       
           <!-- Dialog de exclusão -->
-          <div v-if="isDialogOpen" class="dialog-overlay" @click.self="closeDeleteDialog">
+          <div v-if="isDialogOpen" class="dialogDelete" @click.self="closeDeleteDialog">
             <div class="dialogDeleteTask">
               <h3 class="titleDialogDeleteTask">Excluir Tarefa</h3>
               <p class="textConfirmeDelete">Deseja excluir esta tarefa?</p>
-      
-              <div>
-                <button class="buttonCancelDelete" @click="closeDeleteDialog">Cancelar</button>
-                <button class="buttonConfirmDelete" @click="confirmDelete">Excluir</button>
-              </div>
+              <button class="buttonCancelDelete" @click="closeDeleteDialog">Cancelar</button>
+              <button class="buttonConfirmDelete" @click="confirmDelete">Excluir</button>
             </div>
           </div>
         </div>
@@ -51,7 +50,7 @@
 <script setup>
 import { ref } from 'vue';
 import { defineEmits } from 'vue';
-
+import { deleteTask } from '../services/taskService'; 
 
 defineProps({
   tasks: {
@@ -60,28 +59,60 @@ defineProps({
   },
 });
 
+const statusClass = (status) => {
+  if (status === 0) {
+    return 'chipBlue';
+  } else if (status === 1) {
+    return 'chipYellow';
+  } else if (status === 2) {
+    return 'chipGreen';
+  }
+  return '';
+};
+
+const statusText = (status) => {
+  if (status === 0) {
+    return 'A fazer';
+  } else if (status === 1) {
+    return 'Em andamento';
+  } else if (status === 2) {
+    return 'Concluído';
+  }
+  return '';
+};
 
 const expandedIndex = ref(null);
 const isBalloonOpen = ref([]);
-const isDialogOpen = ref(false); 
-const dialogType = ref(''); 
-const emit = defineEmits(['edit-action']);
-
+const isDialogOpen = ref(false);
+const dialogType = ref('');
+const taskToDelete = ref(null);
+const emit = defineEmits(['edit-action', 'update-tasks']);
 const openEditDialog = () => {
   emit('edit-action'); // Emite o evento para o pai
 };
 
-const openDeleteDialog = () => {
-  dialogType.value = 'delete';
-  isDialogOpen.value = true; 
+const openDeleteDialog = (id) => {
+  taskToDelete.value = id; // Define o ID da tarefa a ser excluída
+  isDialogOpen.value = true; // Abre o diálogo
 };
 
 const closeDeleteDialog = () => {
   isDialogOpen.value = false; 
+  taskToDelete.value = null; 
 };
 
-const confirmDelete = () => {
-  closeDeleteDialog();
+const confirmDelete = async () => {
+  if (!taskToDelete.value) return;
+
+  try {
+    await deleteTask(taskToDelete.value);  // Chama a função deleteTask
+    console.log(`Tarefa com ID ${taskToDelete.value} excluída com sucesso!`);
+    tasks.value = tasks.value.filter(task => task.id !== taskToDelete.value); // Atualiza a lista de tarefas removendo a tarefa excluída
+    closeDeleteDialog(); // Fecha o diálogo de exclusão
+  } catch (error) {
+
+  }
+  isDialogOpen.value = false; 
 };
 
 const toggleBalloon = (index) => {
@@ -91,14 +122,14 @@ const toggleExpand = (index) => {
   expandedIndex.value = expandedIndex.value === index ? null : index;
 };
 
-const getStatus = (status) => {
-  const statusMap = {
-    NotStarted: 'Não Iniciado',
-    InProgress: 'Em Andamento',
-    Completed: 'Concluído',
-  };
-  return statusMap[status] || 'Desconhecido';
-};
+// const getStatus = (status) => {
+//   const statusMap = {
+//     NotStarted: 'Não Iniciado',
+//     InProgress: 'Em Andamento',
+//     Completed: 'Concluído',
+//   };
+//   return statusMap[status] || 'Desconhecido';
+// };
 
 </script>
 
@@ -144,6 +175,36 @@ const getStatus = (status) => {
   display: inline-block;
 }
 
+.actionTaskOptions {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+}
+
+p {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+  color: white; 
+}
+
+.chipBlue {
+  background-color: rgba(0, 123, 255, 0.2); 
+  color: #007bff; 
+}
+
+.chipYellow {
+  background-color: rgba(255, 193, 7, 0.2); 
+  color: #ffc107; 
+}
+
+.chipGreen {
+  background-color: rgba(40, 167, 69, 0.2); 
+  color: #28a745; 
+}
 
 
 .expandBtn {
@@ -199,8 +260,8 @@ const getStatus = (status) => {
 }
 
 .titleDialogDeleteTask {
-  color: #832b2b;
-  padding-bottom: 0px;
+  margin-top: 20px;
+  margin-bottom: 14px;
   font-size: 20px;
 }
 
@@ -215,6 +276,7 @@ const getStatus = (status) => {
   height: 40px;
   padding: 10px;
   margin-top: 10px;
+  margin-bottom: 10px;
   background-color: #01b894;
   color: white;
   border: none;
@@ -283,7 +345,7 @@ const getStatus = (status) => {
   color: #832b2b;
 }
 
-.dialog-overlay {
+.dialogDelete {
   position: fixed;
   top: 0;
   left: 0;
@@ -294,6 +356,7 @@ const getStatus = (status) => {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 0;
 }
 
 /* Estilos para o conteúdo do dialog */
@@ -302,10 +365,9 @@ const getStatus = (status) => {
   flex-direction: column; 
   align-items: center; 
   background-color: white;
-  padding: 10px;
   border-radius: 20px;
   width: 250px;
-  height: 200px;
+  height: 220px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: scale(0.8);
@@ -329,8 +391,6 @@ const getStatus = (status) => {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-
-
 .idTaskInDescription {
   font-size: 10px;
   color: #ccc;
@@ -340,4 +400,5 @@ const getStatus = (status) => {
   color: #636E71;
   font-size: 12px;  
 }
+
 </style>
