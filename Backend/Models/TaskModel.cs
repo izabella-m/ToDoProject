@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ToDoAPI.Models;
 
 public class TaskModel
 {
     public int Id { get; set; }
     
-    public string Title { get; set; } 
+    [Required]
+    public string Title { get; set; } = string.Empty; // Garante valor padrão vazio
     
     public string? Description { get; set; } 
     

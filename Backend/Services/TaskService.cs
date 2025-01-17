@@ -71,7 +71,8 @@ public class TaskService : ITaskInterface // Respeita as regras de task interfac
                 Description = createTaskDto.Description,
                 Status = createTaskDto.Status,
             };
-            
+            Console.WriteLine($"Task being created: Title={task.Title}, Description={task.Description}, Status={task.Status}");
+            Console.WriteLine("passa aqui");
             _context.Add(task);
             await _context.SaveChangesAsync(); // Para adicionar no banco
             

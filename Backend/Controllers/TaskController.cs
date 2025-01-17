@@ -31,9 +31,12 @@ public class TaskController : ControllerBase // or Controller
    [HttpPost("CreateTask")]
    public async Task<ActionResult<ResponseModel<List<TaskModel>>>> CreateTask(CreateTaskDto createTaskDto)
    {
+      Console.WriteLine($"Received DTO: Title={createTaskDto.Title}, Description={createTaskDto.Description}, Status={createTaskDto.Status}");
+
       var task = await _taskInterface.CreateTask(createTaskDto); 
       return Ok(task);
    }
+
    
    [HttpPut("UpdateTask")]
    public async Task<ActionResult<ResponseModel<List<TaskModel>>>> UpdateTask(EditTaskDto editTaskDto)
