@@ -1,4 +1,4 @@
-Documentação - Desafio Técnico
+Documentação 
 
 O projeto é uma aplicação de To-Do List que permite criar, visualizar, filtrar e apagar tarefas. Desenvolvido em .NET com arquitetura baseada em Repository Pattern, utiliza Entity Framework Core para persistência de dados e SQLite como banco de dados. A API RESTful disponibiliza endpoints para gerenciamento das tasks, seguindo boas práticas de desenvolvimento. No front-end, o projeto foi desenvolvido com Vue.js, com funcionalidades como adicionar, visualizar, filtrar e apagar tarefas diretamente na interface.
 Foram implementados diálogos modais para adicionar tarefas. A comunicação com a API é feita via HTTP para garantir a integração eficiente entre o front-end e o back-end.
